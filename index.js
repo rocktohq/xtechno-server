@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -31,6 +31,36 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
+    // Collections
+    const productCollection = client.db("xTechno").collection("products");
+    const userCollection = client.db("xTechno").collection("users");
+    const brandCollection = client.db("xTechno").collection("brands");
+    const myCart = client.db("xTechno").collection("cart");
+    const adCollection = client.db("xTechno").collection("advertisements");
+
+    // Get Brands
+    app.get("/brands", async (req, res) => {
+      const brands = brandCollection.find();
+      const result = await brands.toArray();
+      res.send(result);
+    });
+
+    // Get All Products of a Brand
+    app.get("/brands/:brand", async (req, res) => {
+      const brand = req.params.brand;
+      const query = { brand: brand };
+      const products = productCollection.find(query);
+      const result = await products.toArray();
+      res.send(result);
+    });
+
+    // Get Single Product
+    app.get("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await productCollection.findOne(query);
+      res.send(result);
+    });
 
 
     // Send a ping to confirm a successful connection
