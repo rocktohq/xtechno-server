@@ -45,6 +45,15 @@ async function run() {
       res.send(result);
     });
 
+    // Get Brands Advertisements
+    app.get("/advertisements/:brandId", async (req, res) => {
+      const brandId = req.params.brandId;
+      const query = { _id: new ObjectId(brandId) };
+      const advertisements = advertisements.find(query);
+      const result = await advertisements.toArray();
+      res.send(result);
+    });
+
     // Get All Products of a Brand
     app.get("/brands/:brand", async (req, res) => {
       const brand = req.params.brand;
