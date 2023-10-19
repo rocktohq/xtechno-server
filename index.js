@@ -36,21 +36,11 @@ async function run() {
     const userCollection = client.db("xTechno").collection("users");
     const brandCollection = client.db("xTechno").collection("brands");
     const myCart = client.db("xTechno").collection("cart");
-    const adCollection = client.db("xTechno").collection("advertisements");
 
     // Get Brands
     app.get("/brands", async (req, res) => {
       const brands = brandCollection.find();
       const result = await brands.toArray();
-      res.send(result);
-    });
-
-    // Get Brands Advertisements
-    app.get("/advertisements/:brandId", async (req, res) => {
-      const brandId = req.params.brandId;
-      const query = { _id: new ObjectId(brandId) };
-      const advertisements = advertisements.find(query);
-      const result = await advertisements.toArray();
       res.send(result);
     });
 
@@ -71,6 +61,51 @@ async function run() {
       res.send(result);
     });
 
+    // Add a Product
+    app.post("/products", async (req, res) => {
+      const product = req.body;
+      const result = await productCollection.insertOne(product);
+      res.send(result);
+    });
+
+    // Update a Product
+    app.put("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const product = req.body;
+      console.log(product)
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedProduct = {
+        $set: product
+      }
+
+      const result = await productCollection.updateOne(filter, updatedProduct, options);
+      res.send(result);
+    });
+
+    // My Cart
+    app.get("/cart/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { user_email: email }
+      const cart = myCart.find(query);
+      const result = await cart.toArray();
+      res.send(result);
+    });
+
+    // Add to Cart
+    app.post("/cart", async (req, res) => {
+      const cart = req.body;
+      const result = await myCart.insertOne(cart);
+      res.send(result);
+    });
+
+    // Delete from Cart
+    app.delete("/cart/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await myCart.deleteOne(query);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
