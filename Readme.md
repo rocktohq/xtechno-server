@@ -6,19 +6,19 @@
 
 ## Setup
 
-### Install Dependencies:
+#### Install Dependencies:
 
 ```
 npm install
 ```
 
-### Environment Variables
+#### Environment Variables
 ```javascript
 DB_USER=MongoDB_DB_User
 DB_PASS=MongoDB_DB_Password
 ```
 
-### Start the Server:
+#### Start the Server:
 
 ```
 nodemon index.js
